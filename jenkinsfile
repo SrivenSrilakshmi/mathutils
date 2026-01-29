@@ -53,3 +53,23 @@ pipeline {
     }
   }
 }
+
+
+post {
+  success {
+    emailext(
+      subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+      body: "Build succeeded.\n\nJob: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}",
+      to: "your-email@example.com"
+    )
+  }
+  failure {
+    emailext(
+      subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+      body: "Build failed.\n\nCheck console output:\n${env.BUILD_URL}",
+      to: "your-email@example.com"
+    )
+  }
+}
+
+

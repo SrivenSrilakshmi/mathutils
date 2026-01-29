@@ -29,7 +29,19 @@ pipeline {
       }
     }
 
-    stage('Package Artifact (JAR)') {
+    stage('SonarQube Analysis') {
+      steps {
+        withSonarQubeEnv('sonarqube') {
+          bat """
+            mvn -B sonar:sonar ^
+              -Dsonar.projectKey=mathutils ^
+              -Dsonar.projectName=mathutils
+          """
+        }
+      }
+    }
+
+    stage('Package Artifact') {
       steps {
         bat 'mvn -B package -DskipTests'
       }

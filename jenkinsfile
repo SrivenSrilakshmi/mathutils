@@ -13,7 +13,7 @@ pipeline {
 
     stage('Build + Test') {
       steps {
-        sh 'mvn -B -U clean test'
+        bat 'mvn -B -U clean test'
       }
       post {
         always {
@@ -24,7 +24,7 @@ pipeline {
 
     stage('Package') {
       steps {
-        sh 'mvn -B package -DskipTests'
+        bat 'mvn -B package -DskipTests'
       }
       post {
         success {

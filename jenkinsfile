@@ -11,24 +11,34 @@ pipeline {
       steps { checkout scm }
     }
 
-    stage('Build + Test') {
+    stage('Build + Test + Coverage') {
       steps {
-        bat 'mvn -B -U clean test'
+        bat 'mvn -B -U clean test jacoco:report'
       }
       post {
         always {
+          // Test results
           junit 'target/surefire-reports/*.xml'
+
+          // Publish JaCoCo coverage in Jenkins (requires JaCoCo plugin)
+          jacoco execPattern: 'target\\jacoco.exec',
+                 classPattern: 'target\\classes',
+                 sourcePattern: 'src\\main\\java',
+                 exclusionPattern: '**\\*Test*'
+
+          // Archive the HTML coverage report so you can open it from Jenkins
+          archiveArtifacts artifacts: 'target\\site\\jacoco\\**', fingerprint: true
         }
       }
     }
 
-    stage('Package') {
+    stage('Package Artifact (JAR)') {
       steps {
         bat 'mvn -B package -DskipTests'
       }
       post {
         success {
-          archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+          archiveArtifacts artifacts: 'target\\*.jar', fingerprint: true
         }
       }
     }

@@ -53,41 +53,33 @@ pipeline {
     }
   }
 
-  // ✅ Notifications MUST be inside pipeline { } at the same level as stages { }
+  // ✅ ONLY ONE pipeline-level post section
   post {
     success {
-      echo "NOTIFICATION: ✅ SUCCESS ${env.JOB_NAME} #${env.BUILD_NUMBER} - ${env.BUILD_URL}"
-      // If you want email later, we can add emailext here AFTER SMTP is configured.
+      emailext(
+        to: 'YOUR_EMAIL@gmail.com',
+        subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: """Build SUCCESS
+
+Job: ${env.JOB_NAME}
+Build: #${env.BUILD_NUMBER}
+URL: ${env.BUILD_URL}
+"""
+      )
     }
     failure {
-      echo "NOTIFICATION: ❌ FAILURE ${env.JOB_NAME} #${env.BUILD_NUMBER} - ${env.BUILD_URL}"
+      emailext(
+        to: 'YOUR_EMAIL@gmail.com',
+        subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: """Build FAILURE
+
+Job: ${env.JOB_NAME}
+Build: #${env.BUILD_NUMBER}
+URL: ${env.BUILD_URL}
+"""
+      )
     }
-  } 
-
-  post {
-  success {
-    emailext(
-      to: 'srivensrilakshmi@gmail.com',
-      subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-      body: """Build SUCCESS
-
-Job: ${env.JOB_NAME}
-Build: #${env.BUILD_NUMBER}
-URL: ${env.BUILD_URL}
-"""
-    )
-  }
-  failure {
-    emailext(
-      to: 'srivensrilakshmi@gmail.com',
-      subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-      body: """Build FAILURE
-
-Job: ${env.JOB_NAME}
-Build: #${env.BUILD_NUMBER}
-URL: ${env.BUILD_URL}
-"""
-    )
   }
 }
-}
+
+
